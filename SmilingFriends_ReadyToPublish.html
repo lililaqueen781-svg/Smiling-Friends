@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Smiling Friends 🦊</title>
+<style>
+body{margin:0;font-family:Arial,sans-serif;background:#fff9e8;color:#444}
+header{background:linear-gradient(90deg,#ffd166,#ffb347);padding:20px;text-align:center}
+h1{margin:0}
+nav{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;padding:10px;background:#fff0c2}
+button{background:#7ed957;border:none;padding:10px 15px;border-radius:20px;cursor:pointer}
+.card{background:white;margin:15px auto;padding:15px;max-width:700px;border-radius:18px;box-shadow:0 2px 8px rgba(0,0,0,.1)}
+section{padding:10px}
+input,textarea{width:95%;padding:10px;margin:5px 0;border-radius:10px;border:1px solid #ddd}
+.hidden{display:none}
+</style>
+</head>
+<body>
+
+<header>
+<h1>🦊 Smiling Friends</h1>
+<p>Des sourires, de la confiance et des familles sereines.</p>
+</header>
+
+<nav>
+<button onclick="show('home')">Accueil</button>
+<button onclick="show('babysitters')">Babysitters</button>
+<button onclick="show('parent')">Parent</button>
+<button onclick="show('supervisor')">Parent superviseur</button>
+</nav>
+
+<section id="home">
+<div class="card">
+<h2>Bienvenue</h2>
+<p>Smiling Friends met en relation des familles et des adolescents souhaitant faire du babysitting.</p>
+<p>🦊 Sunny le renard veille sur tout le monde !</p>
+</div>
+</section>
+
+<section id="babysitters" class="hidden">
+<div class="card"><h3>Emma, 16 ans ⭐⭐⭐⭐⭐</h3><p>Lecture, jeux, aide aux devoirs.</p></div>
+<div class="card"><h3>Lucas, 17 ans ⭐⭐⭐⭐</h3><p>Sport, activités extérieures.</p></div>
+<div class="card"><h3>Sarah, 15 ans ⭐⭐⭐⭐⭐</h3><p>Créative et responsable.</p></div>
+</section>
+
+<section id="parent" class="hidden">
+<div class="card">
+<h2>Créer une mission</h2>
+<input id="titre" placeholder="Titre de la mission">
+<textarea id="desc" placeholder="Description"></textarea>
+<button onclick="ajouterMission()">Envoyer la demande</button>
+</div>
+<div class="card">
+<h3>Mes demandes</h3>
+<ul id="missions"></ul>
+</div>
+</section>
+
+<section id="supervisor" class="hidden">
+<div class="card">
+<h2>Validation parent superviseur</h2>
+<ul id="supervision"></ul>
+</div>
+</section>
+
+<script>
+function show(id){
+ document.querySelectorAll('section').forEach(s=>s.classList.add('hidden'));
+ document.getElementById(id).classList.remove('hidden');
+ refresh();
+}
+
+let missions = JSON.parse(localStorage.getItem('sf_missions') || '[]');
+
+function save(){
+ localStorage.setItem('sf_missions', JSON.stringify(missions));
+}
+
+function ajouterMission(){
+ const titre=document.getElementById('titre').value;
+ const desc=document.getElementById('desc').value;
+ if(!titre) return alert("Ajoutez un titre");
+ missions.push({titre,desc,status:'En attente'});
+ save();
+ refresh();
+ alert("Mission créée !");
+}
+
+function refresh(){
+ const m=document.getElementById('missions');
+ const s=document.getElementById('supervision');
+ m.innerHTML='';
+ s.innerHTML='';
+
+ missions.forEach((x,i)=>{
+   m.innerHTML += `<li><b>${x.titre}</b> - ${x.status}</li>`;
+
+   s.innerHTML += `<li><b>${x.titre}</b> - ${x.status}
+   <button onclick="valider(${i})">Valider</button>
+   <button onclick="refuser(${i})">Refuser</button>
+   </li>`;
+ });
+}
+
+function valider(i){
+ missions[i].status='Validée ✅';
+ save(); refresh();
+}
+function refuser(i){
+ missions[i].status='Refusée ❌';
+ save(); refresh();
+}
+
+refresh();
+</script>
+
+</body>
+</html>
